@@ -10,7 +10,7 @@ import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import { defaultPizzaImage } from '@/components/ProductListItem'
 import { FontAwesome } from '@expo/vector-icons'
 import Colors from '@/constants/Colors'
-import { useProduct } from '@/app/api/products'
+import { useProduct } from '@/api/products'
 
 const ProductDetailsScreen = () => {
   const { id: idString } = useLocalSearchParams()

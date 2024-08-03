@@ -13,7 +13,7 @@ import { defaultPizzaImage } from '@/components/ProductListItem'
 import Button from '@/components/Button'
 import { useCart } from '@/providers/CartProvider'
 import { PizzaSize } from '@/types/types'
-import { useProduct } from '@/app/api/products'
+import { useProduct } from '@/api/products'
 
 const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL']
 

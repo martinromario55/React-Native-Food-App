@@ -10,7 +10,7 @@ import {
   useInsertProduct,
   useProduct,
   useUpdateProduct,
-} from '@/app/api/products'
+} from '@/api/products'
 
 const CreateProductScreen = () => {
   const [name, setName] = useState('')

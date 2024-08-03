@@ -1,10 +1,10 @@
-import { CartItem, Product } from '@/types/types'
+import { CartItem, Tables } from '@/types/types'
 import { randomUUID } from 'expo-crypto'
 import { createContext, PropsWithChildren, useContext, useState } from 'react'
 
 type CartType = {
   items: CartItem[]
-  addItem: (product: Product, size: CartItem['size']) => void
+  addItem: (product: Tables<'products'>, size: CartItem['size']) => void
   updateQuantity: (itemId: string, amount: -1 | 1) => void
   total: number
 }
@@ -19,7 +19,7 @@ const CartContext = createContext<CartType>({
 const CartProvider = ({ children }: PropsWithChildren) => {
   const [items, setItems] = useState<CartItem[]>([])
 
-  const addItem = (product: Product, size: CartItem['size']) => {
+  const addItem = (product: Tables<'products'>, size: CartItem['size']) => {
     // console.log(product)
     // *If Already in cart, increment quantity else return
     const existingItem = items.find(
