@@ -1,11 +1,16 @@
 import Button from '@/components/Button'
 import { defaultPizzaImage } from '@/components/ProductListItem'
 import Colors from '@/constants/Colors'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Alert, Image, StyleSheet, Text, TextInput, View } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
-import { useInsertProduct } from '@/app/api/products'
+import {
+  useDeleteProduct,
+  useInsertProduct,
+  useProduct,
+  useUpdateProduct,
+} from '@/app/api/products'
 
 const CreateProductScreen = () => {
   const [name, setName] = useState('')
@@ -14,10 +19,23 @@ const CreateProductScreen = () => {
   const [image, setImage] = useState<string | null>(null)
   const router = useRouter()
 
-  const { id } = useLocalSearchParams()
+  const { id: idString } = useLocalSearchParams()
+  const id = parseFloat(typeof idString === 'string' ? idString : idString[0])
   const isUpdating = !!id
 
   const { mutate: insertProduct } = useInsertProduct()
+  const { mutate: updateProduct } = useUpdateProduct()
+  const { mutate: deleteProduct } = useDeleteProduct()
+
+  const { data: updatingProduct } = useProduct(id)
+
+  useEffect(() => {
+    if (updatingProduct) {
+      setName(updatingProduct.name)
+      setPrice(updatingProduct.price.toString())
+      setImage(updatingProduct.image_url)
+    }
+  }, [updatingProduct])
 
   const resetFields = () => {
     setName('')
@@ -75,13 +93,25 @@ const CreateProductScreen = () => {
     if (!validateInput()) {
       return
     }
-    // TODO: create product, save in DB
-
-    resetFields()
+    // create product, save in DB
+    updateProduct(
+      { id, name, price: parseFloat(price), image },
+      {
+        onSuccess: () => {
+          resetFields()
+          router.back()
+        },
+      }
+    )
   }
 
   const onDelete = () => {
-    // TODO: delete product, remove from DB
+    // delete product, remove from DB
+    deleteProduct(id, {
+      onSuccess: () => {
+        router.replace('/(admin)')
+      },
+    })
   }
 
   const confirmDelete = () => {
