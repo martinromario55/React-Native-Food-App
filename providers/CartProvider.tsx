@@ -90,8 +90,6 @@ const CartProvider = ({ children }: PropsWithChildren) => {
       product_id: item.product_id,
       size: item.size,
       quantity: item.quantity,
-      // price: item.product.price,
-      // total: item.product.price * item.quantity,
     }))
 
     insertOrderItems(orderItems, {
