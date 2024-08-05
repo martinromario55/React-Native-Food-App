@@ -1,6 +1,5 @@
 import {
   ActivityIndicator,
-  Image,
   Pressable,
   StyleSheet,
   Text,
@@ -8,12 +7,12 @@ import {
 } from 'react-native'
 import React, { useState } from 'react'
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
-import products from '@/assets/data/products'
 import { defaultPizzaImage } from '@/components/ProductListItem'
 import Button from '@/components/Button'
 import { useCart } from '@/providers/CartProvider'
 import { PizzaSize } from '@/types/types'
 import { useProduct } from '@/api/products'
+import RemoteImage from '@/components/RemoteImage'
 
 const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL']
 
@@ -42,16 +41,22 @@ const ProductDetailsScreen = () => {
     return <ActivityIndicator />
   }
 
-  if (error) {
+  if (error || !product) {
     return <Text>Failed to fetch product.</Text>
   }
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ title: product.name }} />
 
-      <Image
+      {/* <Image
         source={{ uri: product.image || defaultPizzaImage }}
         style={styles.image}
+      /> */}
+      <RemoteImage
+        path={product.image}
+        fallback={defaultPizzaImage}
+        style={styles.image}
+        resizeMode="contain"
       />
       <Text style={styles.sizes}>Select Size</Text>
       <View style={styles.sizeView}>

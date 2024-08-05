@@ -11,6 +11,10 @@ import {
   useProduct,
   useUpdateProduct,
 } from '@/api/products'
+import * as FileSystem from 'expo-file-system'
+import { randomUUID } from 'expo-crypto'
+import { supabase } from '@/lib/supabase'
+import { decode } from 'base64-arraybuffer'
 
 const CreateProductScreen = () => {
   const [name, setName] = useState('')
@@ -20,7 +24,7 @@ const CreateProductScreen = () => {
   const router = useRouter()
 
   const { id: idString } = useLocalSearchParams()
-  const id = parseFloat(typeof idString === 'string' ? idString : idString[0])
+  const id = parseFloat(typeof idString === 'string' ? idString : idString?.[0])
   const isUpdating = !!id
 
   const { mutate: insertProduct } = useInsertProduct()
@@ -71,13 +75,16 @@ const CreateProductScreen = () => {
     }
   }
 
-  const onCreate = () => {
+  const onCreate = async () => {
     if (!validateInput()) {
       return
     }
+
+    const imagePath = await uploadImage()
+
     // create product, save in DB
     insertProduct(
-      { name, price: parseFloat(price), image },
+      { name, price: parseFloat(price), image: imagePath },
       {
         onSuccess: () => {
           resetFields()
@@ -141,6 +148,25 @@ const CreateProductScreen = () => {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri)
+    }
+  }
+
+  const uploadImage = async () => {
+    if (!image?.startsWith('file://')) {
+      return
+    }
+
+    const base64 = await FileSystem.readAsStringAsync(image, {
+      encoding: 'base64',
+    })
+    const filePath = `${randomUUID()}.png`
+    const contentType = 'image/png'
+    const { data, error } = await supabase.storage
+      .from('product-images')
+      .upload(filePath, decode(base64), { contentType })
+
+    if (data) {
+      return data.path
     }
   }
 
