@@ -51,6 +51,7 @@
     "jest-expo": "~51.0.3",
     "react-native-dotenv": "^3.4.11",
     "react-test-renderer": "18.2.0",
+    "supabase": "^1.187.10",
     "typescript": "~5.3.3"
   },
   "private": true
