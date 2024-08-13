@@ -25,20 +25,23 @@ const fetchPaymentSheetParams = async (amount: number) => {
 export const initialisePaymentSheet = async (amount: number) => {
   console.log('Initialising payment sheet, for: ', amount)
 
-  const { paymentIntent, publishableKey } = await fetchPaymentSheetParams(
-    amount
-  )
+  const { paymentIntent, publishableKey, customer, ephemeralKey } =
+    await fetchPaymentSheetParams(amount)
   // console.log(data)
 
   if (!paymentIntent || !publishableKey) return
 
-  await initPaymentSheet({
+  const result = await initPaymentSheet({
     merchantDisplayName: 'GriotHub',
     paymentIntentClientSecret: paymentIntent,
+    customerId: customer,
+    customerEphemeralKeySecret: ephemeralKey,
     defaultBillingDetails: {
       name: 'Jane Doe',
     },
   })
+
+  console.log(result)
 }
 
 export const openPaymentSheet = async () => {
