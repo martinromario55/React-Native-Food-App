@@ -1,5 +1,6 @@
 import { useInsertOrderItems } from '@/api/order-items'
 import { useInsertOrder } from '@/api/orders'
+import { initialisePaymentSheet, openPaymentSheet } from '@/lib/stripe'
 import { CartItem, Tables } from '@/types/types'
 import { randomUUID } from 'expo-crypto'
 import { useRouter } from 'expo-router'
@@ -73,9 +74,16 @@ const CartProvider = ({ children }: PropsWithChildren) => {
     setItems([])
   }
 
-  const checkout = () => {
+  const checkout = async () => {
     // TODO: Send order to server
     // console.warn('Checkout:', items)
+    await initialisePaymentSheet(Math.floor(total * 100)) // turn dollars to cents
+    const paid = await openPaymentSheet()
+
+    if (!paid) {
+      return
+    }
+
     insertOrder(
       { total },
       {

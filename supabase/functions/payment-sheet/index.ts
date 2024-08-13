@@ -9,10 +9,13 @@ serve(async req => {
 
     // Create a PaymentIntent so that the SDK can charge the logged in customer.
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: 1099,
+      amount: amount,
       currency: 'usd',
       // customer: customer,
     })
+
+    console.log('Payment intent created', paymentIntent)
+
     const res = {
       publishableKey: Deno.env.get('EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY'),
       paymentIntent: paymentIntent.client_secret,
@@ -24,6 +27,7 @@ serve(async req => {
       status: 200,
     })
   } catch (error) {
+    console.error('Error creating payment intent:', error)
     return new Response(JSON.stringify(error), {
       headers: { 'Content-Type': 'application/json' },
       status: 400,
